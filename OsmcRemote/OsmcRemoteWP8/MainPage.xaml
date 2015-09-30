@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="OsmcRemoteWP8.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OsmcRemoteWP8"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Button">
+                <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+                <Setter Property="Margin" Value="5"></Setter>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Button Content="Power" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}"></Button>
+        <Button Content="Back" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="0"></Button>
+        <Button Content="Mute" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="2"></Button>
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+            <Button Content="+" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="-" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+        </StackPanel>
+        <Button Content="&#xE08A;" FontFamily="Segoe UI Symbol" Grid.Row="0" Grid.Column="1"></Button>
+        <Button Content="&#xE085;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="0"></Button>
+        <Button Content="OK" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="1" SizeChanged="OkButtonSizeChanged"></Button>
+        <Button Content="&#xE086;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="2"></Button>
+        <Button Content="&#xE08b;" FontFamily="Segoe UI Symbol" Grid.Row="2" Grid.Column="1"></Button>
+        <Button Content="&lt;&lt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="0"></Button>
+        <Button Content="&gt;&gt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="2"></Button>
+        <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="1">
+            <Button Content="&lt;&lt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="&gt;&gt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+        </StackPanel>
+
+    </Grid>
+</Page>
