@@ -80,13 +80,25 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\OsmcRemoteClassic\OsmcRemoteClassic.csproj">
+      <Project>{0c16e6c9-1560-4303-a8d3-b9a1cf4a4450}</Project>
+      <Name>OsmcRemoteClassic</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\Login.cs" />
+    <Compile Include="Commands\Settings.cs" />
+    <Compile Include="Data\RemoteControlClient.cs" />
+    <Compile Include="Data\SettingsData.cs" />
+    <Compile Include="Helpers\DialogsHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AuthenticationDialog.xaml.cs">
+      <DependentUpon>AuthenticationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -111,6 +123,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AuthenticationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

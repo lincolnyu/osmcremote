@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OsmcRemoteWP8.Commands;
+using OsmcRemoteWP8.Data;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -23,9 +25,15 @@ namespace OsmcRemoteWP8
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += this.OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
+
+        public Login LoginCommand { get; private set; } = new Login();
+
+        public SettingsData Settings { get; private set; } = new SettingsData();
+
+        public RemoteControlClient Client { get; private set; } = new RemoteControlClient();
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -80,6 +88,12 @@ namespace OsmcRemoteWP8
 
                 rootFrame.ContentTransitions = null;
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
+
+                Settings.LoadCredentials();
+                if (LoginCommand.CanExecute(null))
+                {
+                    LoginCommand.Execute(null);
+                }
 
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation

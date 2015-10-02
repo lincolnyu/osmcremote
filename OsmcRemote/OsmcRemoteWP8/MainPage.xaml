@@ -6,14 +6,22 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="PageOnLoaded">
     <Grid>
         <Grid.Resources>
-            <Style TargetType="Button">
+            <Style TargetType="Button" x:Key="BigButton">
                 <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
                 <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
                 <Setter Property="Margin" Value="5"></Setter>
             </Style>
+            <Style TargetType="Button" x:Key="SmallButton">
+                <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Width" Value="{Binding SmallButtonWidth}"/>
+                <Setter Property="Height" Value="{Binding SmallButtonHeight}"/>
+            </Style>
+
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -27,24 +35,32 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button Content="Power" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}"></Button>
-        <Button Content="Back" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="0"></Button>
-        <Button Content="Mute" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="2"></Button>
+        <Button Content="Power" Style="{StaticResource SmallButton}" Background="Red"></Button>
+        <Button Content="Back" Style="{StaticResource SmallButton}" Grid.Row="2" Grid.Column="0"></Button>
+        <Button Content="Mute" Style="{StaticResource SmallButton}" Grid.Row="2" Grid.Column="2"></Button>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
-            <Button Content="+" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
-            <Button Content="-" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="+" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="-" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol"></Button>
         </StackPanel>
-        <Button Content="&#xE08A;" FontFamily="Segoe UI Symbol" Grid.Row="0" Grid.Column="1"></Button>
-        <Button Content="&#xE085;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="0"></Button>
-        <Button Content="OK" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="1" SizeChanged="OkButtonSizeChanged"></Button>
-        <Button Content="&#xE086;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="2"></Button>
-        <Button Content="&#xE08b;" FontFamily="Segoe UI Symbol" Grid.Row="2" Grid.Column="1"></Button>
-        <Button Content="&lt;&lt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="0"></Button>
-        <Button Content="&gt;&gt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="2"></Button>
+        <Button Content="&#xE08A;" FontFamily="Segoe UI Symbol" Grid.Row="0" Grid.Column="1" Style="{StaticResource BigButton}"></Button>
+        <Button Content="&#xE085;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="0" Style="{StaticResource BigButton}"></Button>
+        <Button Content="OK" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="1" Name="OkButton" SizeChanged="OkButtonSizeChanged" LayoutUpdated="OkButtonLayoutUpdated" Style="{StaticResource BigButton}" Click="OkButtonOnClick"></Button>
+        <Button Content="&#xE086;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="2" Style="{StaticResource BigButton}"></Button>
+        <Button Content="&#xE08b;" FontFamily="Segoe UI Symbol" Grid.Row="2" Grid.Column="1" Style="{StaticResource BigButton}"></Button>
+        <Button Content="&lt;&lt;" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="0"></Button>
+        <Button Content="&gt;&gt;" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="2"></Button>
         <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="1">
-            <Button Content="&lt;&lt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
-            <Button Content="&gt;&gt;" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="&#xE102;" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol"></Button>
+            <Button Content="&#xE20D;" Style="{StaticResource SmallButton}" FontFamily="Segoe UI Symbol"></Button>
         </StackPanel>
-
     </Grid>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="{Binding Path=., Source={RelativeSource Mode=Self}}">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Setting"></SymbolIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

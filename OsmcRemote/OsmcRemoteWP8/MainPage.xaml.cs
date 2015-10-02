@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using OsmcRemoteWP8.Commands;
+using OsmcRemoteWP8.Data;
+using OsmcRemoteWP8.Helpers;
+using System.ComponentModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,9 +16,15 @@ namespace OsmcRemoteWP8
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        #region Fields
+
         private double _smallButtonWidth;
 
         private double _smallButtonHeight;
+
+        #endregion
+
+        #region Constructors
 
         public MainPage()
         {
@@ -23,8 +32,14 @@ namespace OsmcRemoteWP8
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
+            SetupCommands();
+
             DataContext = this;
         }
+
+        #endregion
+
+        #region Properties
 
         public double SmallButtonWidth
         {
@@ -58,9 +73,37 @@ namespace OsmcRemoteWP8
             }
         }
 
+        public SettingsData Settings
+        {
+            get
+            {
+                return ((App)Application.Current).Settings;
+            }
+        }
+
+        public RemoteControlClient Client
+        {
+            get
+            {
+                return ((App)Application.Current).Client;
+            }
+        }
+
+
+        public Settings SettingsCommand
+        {
+            get; set;
+        }
+
+        #endregion
+
+        #region Events
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
@@ -76,6 +119,14 @@ namespace OsmcRemoteWP8
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+        }
+
+        private async void ShowAuthenticationDialog()
+        {
+            if (!Settings.CredentialsLoaded)
+            {
+                await DialogsHelper.ShowAuthenticationDialog(((App)Application.Current).LoginCommand);
+            }
         }
 
         private void OkButtonSizeChanged(object sender, SizeChangedEventArgs args)
@@ -98,5 +149,32 @@ namespace OsmcRemoteWP8
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        private void OkButtonLayoutUpdated(object sender, object e)
+        {
+            UpdateSmallButtonSize(new Size(OkButton.ActualWidth, OkButton.ActualHeight));
+        }
+
+        private void SetupCommands()
+        {
+            SettingsCommand = new Settings();
+        }
+
+        private void PageOnLoaded(object sender, RoutedEventArgs e)
+        {
+            ShowAuthenticationDialog();
+        }
+
+        #region Button click event handlers
+
+        private void OkButtonOnClick(object sender, RoutedEventArgs e)
+        {
+            Client.Client.InputOk().Wait();
+        }
+
+        #endregion
+
+        #endregion
+
     }
 }
