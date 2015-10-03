@@ -1,17 +1,26 @@
-﻿using System;
+﻿using OsmcRemoteClassic.Results;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OsmcRemoteClassic
 {
-    public class Client : IDisposable
+    public class Client : IDisposable, INotifyPropertyChanged
     {
         #region Fields
 
         public HttpClient _httpClient;
+
+        public int _playersCheckInterval = 5;
+
+        private Timer _playerCheckTimer;
+        private bool _playersActive;
 
         #endregion
 
@@ -46,6 +55,46 @@ namespace OsmcRemoteClassic
             get { return string.Format("http://{0}/jsonrpc?", Address); }
         }
 
+        /// <summary>
+        ///  In seconds
+        /// </summary>
+        public int PlayersCheckInterval
+        {
+            get { return _playersCheckInterval; } 
+            set
+            {
+                if (_playersCheckInterval != value)
+                {
+                    _playersCheckInterval = value;
+                    UpdatePlayersCheckTimer();
+                }
+            }
+        }
+
+        public PlayersResult CurrentPlayers { get; private set; }
+
+        public PropertiesResult CurrentProperties { get; private set; }
+
+        public ItemsResult CurrentItems { get; private set; }
+
+        public bool PlayersActive
+        {
+            get { return _playersActive;  }
+            set
+            {
+                if (_playersActive)
+                {
+                    _playersActive = value;
+                    RaisePropertyChangedEvent("PlayersActive");
+                }
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -60,22 +109,40 @@ namespace OsmcRemoteClassic
                 _httpClient.Dispose();
                 _httpClient = null;
             }
+            if (_playerCheckTimer != null)
+            {
+                _playerCheckTimer.Dispose();
+                _playerCheckTimer = null;
+            }
         }
 
         #endregion
 
         public async Task<HttpResponseMessage> Connect()
         {
+            //var handler = new HttpClientHandler();
+            //handler.UseDefaultCredentials = false;
+            //_httpClient = new HttpClient(handler);
+
             _httpClient = new HttpClient();
             var credentialString = string.Format("{0}:{1}", UserName, Password);
-            
+
             var byteArray = GetAsciiBytes(credentialString).ToArray();
+            var encodedCredentials = Convert.ToBase64String(byteArray);
+            System.Diagnostics.Debug.WriteLine("Encoded credentials: {0}", encodedCredentials);
             // NOTE it's supposed to be basic authentication
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var response = await _httpClient.GetAsync(MainUrl);
+            var auth = new AuthenticationHeaderValue("Basic", encodedCredentials);
+
+            var defHeader = _httpClient.DefaultRequestHeaders;
+            defHeader.Authorization = auth;
+            // the code below guarantees a return of OK, but that's not essential
+            //var cacheControl = new CacheControlHeaderValue();
+            //cacheControl.NoCache = true;
+            //defHeader.CacheControl = cacheControl;
+
+            var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
             return response;
         }
-        
 
         private static IEnumerable<byte> GetAsciiBytes(string str)
         {
@@ -84,6 +151,16 @@ namespace OsmcRemoteClassic
                 var b = (byte)c;
                 yield return b;
             }
+        }
+
+        public async Task<ResponseJson> InputBack()
+        {
+            return await Post("Input.Back");
+        }
+
+        public async Task<ResponseJson> InputHome()
+        {
+            return await Post("Input.Home");
         }
 
         public async Task<ResponseJson> InputUp()
@@ -108,20 +185,66 @@ namespace OsmcRemoteClassic
 
         public async Task<ResponseJson> InputOk()
         {
-            return await Post("Input.Select");
+            var resp =  await Post("Input.Select");
+            // this may change the status
+            UpdatePlaybackStatus();
+            return resp;
         }
 
         public async Task<ResponseJson> InputVolumeUp()
         {
-            return await Post("Application.SetVolume", new KeyValuePair<string, string>("volume", "increment"));
+            return await Post("Application.SetVolume", new KeyValuePair<string, object>("volume", "increment"));
         }
 
         public async Task<ResponseJson> InputVolumeDown()
         {
-            return await Post("Application.SetVolume", new KeyValuePair<string, string>("volume", "decrement"));
+            return await Post("Application.SetVolume", new KeyValuePair<string, object>("volume", "decrement"));
         }
 
-        public async Task<ResponseJson> Post(string method, params KeyValuePair<string, string>[] kvps)
+        public async Task<ResponseJson> SetMute()
+        {
+            return await Post("Application.SetMute", new KeyValuePair<string, object>("mute", "toggle"));
+        }
+
+        public async Task<ResponseJson> ShutDown()
+        {
+            return await Post("System.Shutdown");
+        }
+
+        public async Task<ResponseJson> PlayPause()
+        {
+            var playerId = GetPlayerId();
+            if (playerId < 0)
+            {
+                return null;
+            }
+
+            return await Post("Player.PlayPause", new KeyValuePair<string, object>("playerid", playerId));
+        }
+
+        public async Task<ResponseJson> Stop()
+        {
+            var playerId = GetPlayerId();
+            if (playerId < 0)
+            {
+                return null;
+            }
+
+            return await Post("Player.Stop", new KeyValuePair<string, object>("playerid", playerId));
+        }
+
+        private int GetPlayerId()
+        {
+            if (!PlayersActive)
+            {
+                return -1;
+            }
+
+            var playerId = CurrentPlayers.Players[0].PlayerId;
+            return playerId;
+        }
+
+        public async Task<ResponseJson> Post(string method, params KeyValuePair<string, object>[] kvps)
         {
             var url = GetRpcUrl(method);
 
@@ -135,9 +258,51 @@ namespace OsmcRemoteClassic
             return responseJson;
         }
 
+        
+
+        public async void UpdatePlaybackStatus()
+        {
+            var respPlayers = await Post("Player.GetActivePlayers");
+            CurrentPlayers = respPlayers.Result as PlayersResult;
+            PlayersActive = CurrentPlayers != null && CurrentPlayers.Players.Count > 0;
+            if (CurrentPlayers == null)
+            {
+                return;
+            }
+
+            var respProperties = await Post("Player.GetProperties");
+            CurrentProperties = respProperties.Result as PropertiesResult;
+
+            var respItems = await Post("Player.GetItems");
+            CurrentItems = respItems.Result as ItemsResult;
+        }
+
         private string GetRpcUrl(string command)
         {
             return string.Format("{0}{1}", RpcUrl, command);
+        }
+
+        private void UpdatePlayersCheckTimer()
+        {
+            if (_playerCheckTimer != null)
+            {
+                _playerCheckTimer.Dispose();
+                _playerCheckTimer = null;
+            }
+            _playerCheckTimer = new Timer(UpdatePlayers, null, 0, PlayersCheckInterval * 1000);
+        }
+
+        private void UpdatePlayers(object state)
+        {
+            UpdatePlaybackStatus();
+        }
+
+        private void RaisePropertyChangedEvent(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         #endregion

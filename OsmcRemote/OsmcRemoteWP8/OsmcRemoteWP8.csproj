@@ -80,6 +80,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\OsmcRemoteAppCommon\OsmcRemoteAppCommon.csproj">
+      <Project>{46333d59-4372-458f-8fa6-c6f5bc55a111}</Project>
+      <Name>OsmcRemoteAppCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OsmcRemoteClassic\OsmcRemoteClassic.csproj">
       <Project>{0c16e6c9-1560-4303-a8d3-b9a1cf4a4450}</Project>
       <Name>OsmcRemoteClassic</Name>
@@ -91,9 +95,7 @@
     </Compile>
     <Compile Include="Commands\Login.cs" />
     <Compile Include="Commands\Settings.cs" />
-    <Compile Include="Data\RemoteControlClient.cs" />
-    <Compile Include="Data\SettingsData.cs" />
-    <Compile Include="Helpers\DialogsHelper.cs" />
+    <Compile Include="Helpers\DialogsAndCommandsHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

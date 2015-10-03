@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Input;
-using OsmcRemoteWP8.Views;
-using OsmcRemoteWP8.Helpers;
+using OsmcRemoteApp.Views;
+using OsmcRemoteApp.Helpers;
 using Windows.UI.Xaml;
 
-namespace OsmcRemoteWP8.Commands
+namespace OsmcRemoteApp.Commands
 {
     public class Settings : ICommand
     {
@@ -17,7 +17,8 @@ namespace OsmcRemoteWP8.Commands
 
         public async void Execute(object parameter)
         {
-            await DialogsAndCommandsHelper.ShowAuthenticationDialog(((App)Application.Current).LoginCommand);
+            var login = ((App)Application.Current).LoginCommand;
+            await DialogsAndCommandsHelper.ShowAuthenticationDialog(login);
         }
     }
 }

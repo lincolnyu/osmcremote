@@ -1,4 +1,8 @@
-﻿namespace OsmcRemoteClassic
+﻿using JsonParser;
+using JsonParser.JsonStructures;
+using OsmcRemoteClassic.Results;
+
+namespace OsmcRemoteClassic
 {
     public class ResponseJson
     {
@@ -17,7 +21,11 @@
 
         public string JsonRpc { get; set; } = "2.0";
 
-        public string Result { get; set; }
+        public string ResultJsonString { get; private set; }
+
+        public JsonNode ResultJson { get; private set; }
+
+        public Result Result { get; private set; }
 
         #endregion
 
@@ -48,10 +56,46 @@
                         JsonRpc = val.Trim('"');
                         break;
                     case "result":
-                        Result = val.Trim('"');
+                        {
+                            ResultJsonString = val;
+                            ResultJson = ResultJsonString.ParseJson();
+                            Result = GenerateResultObject();
+                        }
                         break;
                 }
             }
+        }
+
+        private Result GenerateResultObject()
+        {
+            var rjp = ResultJson as JsonPairs;
+            if (rjp != null)
+            {
+                if (rjp.KeyValues.ContainsKey("items"))
+                {
+                    var res = new ItemsResult();
+                    res.LoadFromJson(rjp);
+                    return res;
+                }
+                else if (rjp.KeyValues.ContainsKey("playlistid"))
+                {
+                    var res = new PropertiesResult();
+                    res.LoadFromJson(rjp);
+                    return res;
+                }
+            }
+         
+
+            var rja = ResultJson as JsonArray;
+            if (rja != null)
+            {
+                // should be players, which is the only type that presents as an array
+                var res = new PlayersResult();
+                res.LoadFromJson(rja);
+                return res;
+            }
+
+            return null;
         }
 
         #endregion

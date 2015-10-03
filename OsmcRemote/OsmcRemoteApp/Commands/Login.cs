@@ -1,9 +1,9 @@
-﻿using OsmcRemoteWP8.Helpers;
+﻿using OsmcRemoteApp.Helpers;
 using System;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 
-namespace OsmcRemoteWP8.Commands
+namespace OsmcRemoteApp.Commands
 {
     public class Login : ICommand
     {

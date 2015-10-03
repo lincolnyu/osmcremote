@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,8 +35,6 @@ namespace OsmcRemote
 
         public int Id { get; private set; } = 1;
 
-        public int PlayerId { get; private set; } = 1;
-
         public string MainUrl
         {
             get { return string.Format("http://{0}/", Address); }
@@ -69,37 +65,13 @@ namespace OsmcRemote
 
         public async Task<HttpResponseMessage> Connect()
         {
-            //var handler = new HttpClientHandler();
-            //handler.UseDefaultCredentials = false;
-            //_httpClient = new HttpClient(handler);
-
             _httpClient = new HttpClient();
             var credentialString = string.Format("{0}:{1}", UserName, Password);
-
-            var byteArray = GetAsciiBytes(credentialString).ToArray();
-            var encodedCredentials = Convert.ToBase64String(byteArray);
-            System.Diagnostics.Debug.WriteLine("Encoded credentials: {0}", encodedCredentials);
+            var byteArray = Encoding.ASCII.GetBytes(credentialString);
             // NOTE it's supposed to be basic authentication
-            var auth = new AuthenticationHeaderValue("Basic", encodedCredentials);
-
-            var defHeader = _httpClient.DefaultRequestHeaders;
-            defHeader.Authorization = auth;
-            // the code below guarantees a return of OK, but that's not essential
-            //var cacheControl = new CacheControlHeaderValue();
-            //cacheControl.NoCache = true;
-            //defHeader.CacheControl = cacheControl;
-            
-            var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var response = await _httpClient.GetAsync(MainUrl);
             return response;
-        }
-
-        private static IEnumerable<byte> GetAsciiBytes(string str)
-        {
-            foreach (var c in str)
-            {
-                var b = (byte)c;
-                yield return b;
-            }
         }
 
         public async Task<ResponseJson> InputBack()
@@ -139,30 +111,15 @@ namespace OsmcRemote
 
         public async Task<ResponseJson> InputVolumeUp()
         {
-            return await Post("Application.SetVolume", new KeyValuePair<string, object>("volume", "increment"));
+            return await Post("Application.SetVolume", new KeyValuePair<string, string>("volume", "increment"));
         }
 
         public async Task<ResponseJson> InputVolumeDown()
         {
-            return await Post("Application.SetVolume", new KeyValuePair<string, object>("volume", "decrement"));
+            return await Post("Application.SetVolume", new KeyValuePair<string, string>("volume", "decrement"));
         }
 
-        public async Task<ResponseJson> SetMute()
-        {
-            return await Post("Application.SetMute", new KeyValuePair<string, object>("mute", "toggle"));
-        }
-
-        public async Task<ResponseJson> PlayPause()
-        {
-            return await Post("Player.PlayPause", new KeyValuePair<string, object>("playerid", PlayerId));
-        }
-
-        public async Task<ResponseJson> ShutDown()
-        {
-            return await Post("System.Shutdown");
-        }
-
-        public async Task<ResponseJson> Post(string method, params KeyValuePair<string, object>[] kvps)
+        public async Task<ResponseJson> Post(string method, params KeyValuePair<string, string>[] kvps)
         {
             var url = GetRpcUrl(method);
 

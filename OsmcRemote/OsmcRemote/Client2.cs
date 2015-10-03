@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 
 namespace OsmcRemote
 {
-    public class Client : IDisposable
+    public class Client2 : IDisposable
     {
         #region Fields
 
-        public HttpClient _httpClient;
+        public Windows.Web.Http.HttpClient _httpClient;
 
         #endregion
 
         #region Constructors
 
-        public Client(string address, string username, string password)
+        public Client2(string address, string username, string password)
         {
             Address = address;
             UserName = username;
@@ -36,8 +35,6 @@ namespace OsmcRemote
         public string Password { get; private set; }
 
         public int Id { get; private set; } = 1;
-
-        public int PlayerId { get; private set; } = 1;
 
         public string MainUrl
         {
@@ -69,37 +66,22 @@ namespace OsmcRemote
 
         public async Task<HttpResponseMessage> Connect()
         {
-            //var handler = new HttpClientHandler();
-            //handler.UseDefaultCredentials = false;
-            //_httpClient = new HttpClient(handler);
+            var httpFilter = new HttpBaseProtocolFilter();
+            httpFilter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
+            httpFilter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache;
+            _httpClient = new HttpClient(httpFilter);
 
-            _httpClient = new HttpClient();
             var credentialString = string.Format("{0}:{1}", UserName, Password);
+            var byteArray = Encoding.UTF8.GetBytes(credentialString);
 
-            var byteArray = GetAsciiBytes(credentialString).ToArray();
-            var encodedCredentials = Convert.ToBase64String(byteArray);
-            System.Diagnostics.Debug.WriteLine("Encoded credentials: {0}", encodedCredentials);
-            // NOTE it's supposed to be basic authentication
-            var auth = new AuthenticationHeaderValue("Basic", encodedCredentials);
-
-            var defHeader = _httpClient.DefaultRequestHeaders;
-            defHeader.Authorization = auth;
-            // the code below guarantees a return of OK, but that's not essential
-            //var cacheControl = new CacheControlHeaderValue();
-            //cacheControl.NoCache = true;
-            //defHeader.CacheControl = cacheControl;
-            
-            var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
+            var uri = new Uri(MainUrl);
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            request.Headers.Clear();
+            request.Headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            //request.Headers.Remove("If-Modified-Since");
+            //request.Headers.IfModifiedSince = DateTimeOffset.Now;
+            var response = await _httpClient.SendRequestAsync(request);
             return response;
-        }
-
-        private static IEnumerable<byte> GetAsciiBytes(string str)
-        {
-            foreach (var c in str)
-            {
-                var b = (byte)c;
-                yield return b;
-            }
         }
 
         public async Task<ResponseJson> InputBack()
@@ -152,11 +134,6 @@ namespace OsmcRemote
             return await Post("Application.SetMute", new KeyValuePair<string, object>("mute", "toggle"));
         }
 
-        public async Task<ResponseJson> PlayPause()
-        {
-            return await Post("Player.PlayPause", new KeyValuePair<string, object>("playerid", PlayerId));
-        }
-
         public async Task<ResponseJson> ShutDown()
         {
             return await Post("System.Shutdown");
@@ -169,8 +146,9 @@ namespace OsmcRemote
             var requestJson = new RequestJson { Method = method, Id = Id };
             requestJson.Params = kvps;
 
-            var content = new StringContent(requestJson.ToString(), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(url, content);
+            var content = new HttpStringContent(requestJson.ToString(), Windows.Storage.Streams.UnicodeEncoding.Utf8); //"application/json"
+            var uri = new Uri(url);
+            var response = await _httpClient.PostAsync(uri, content);
             var resp = await response.Content.ReadAsStringAsync();
             var responseJson = new ResponseJson(resp);
             return responseJson;

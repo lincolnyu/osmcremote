@@ -1,7 +1,6 @@
-﻿using System;
-using Windows.Storage;
+﻿using Windows.Storage;
 
-namespace OsmcRemoteWP8.Data
+namespace OsmcRemoteAppCommon.Data
 {
     public class SettingsData
     {

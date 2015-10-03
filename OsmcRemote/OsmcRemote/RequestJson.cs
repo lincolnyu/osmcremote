@@ -13,7 +13,7 @@ namespace OsmcRemote
 
         public string Method { get; set; }
 
-        public IList<KeyValuePair<string, string>> Params { get; set; }
+        public IList<KeyValuePair<string, object>> Params { get; set; }
 
         #endregion
 
@@ -31,7 +31,15 @@ namespace OsmcRemote
                     var p = Params[i];
                     var key = p.Key;
                     var val = p.Value;
-                    sb.AppendFormat("\"{0}\":\"{1}\"", key, val);
+                    if (val is string)
+                    {
+                        sb.AppendFormat("\"{0}\":\"{1}\"", key, val);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("\"{0}\":{1}", key, val);
+                    }
+
                     if (i < Params.Count-1)
                     {
                         sb.Append(',');

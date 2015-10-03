@@ -30,7 +30,7 @@ namespace OsmcRemoteConsole
                     {
                         resp = await client.Post(s);
                     }
-                    Console.WriteLine("id={0}, jsonrpc={1}, result={2}", resp.Id, resp.JsonRpc, resp.Result);
+                    Console.WriteLine("id={0}, jsonrpc={1}, result={2}", resp.Id, resp.JsonRpc, resp.ResultJsonString);
                 }
             }
         }

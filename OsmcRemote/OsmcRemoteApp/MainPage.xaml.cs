@@ -1,15 +1,15 @@
-﻿using OsmcRemoteAppCommon.Data;
-using OsmcRemoteWP8.Commands;
-using OsmcRemoteWP8.Helpers;
+﻿using OsmcRemoteApp.Commands;
+using OsmcRemoteAppCommon.Data;
+using OsmcRemoteApp.Helpers;
 using System.ComponentModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace OsmcRemoteWP8
+namespace OsmcRemoteApp
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
