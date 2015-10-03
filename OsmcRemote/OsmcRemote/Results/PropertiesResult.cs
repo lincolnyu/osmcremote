@@ -2,7 +2,7 @@
 using JsonParser.JsonStructures;
 using System;
 
-namespace OsmcRemoteClassic.Results
+namespace OsmcRemote.Results
 {
     public class PropertiesResult : Result
     {

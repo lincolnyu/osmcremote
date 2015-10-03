@@ -1,8 +1,8 @@
 ﻿using JsonParser;
 using JsonParser.JsonStructures;
-using OsmcRemoteClassic.Results;
+using OsmcRemote.Results;
 
-namespace OsmcRemoteClassic
+namespace OsmcRemote
 {
     public class ResponseJson
     {

@@ -8,8 +8,8 @@
     <ProjectGuid>{0C16E6C9-1560-4303-A8D3-B9A1CF4A4450}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OsmcRemoteClassic</RootNamespace>
-    <AssemblyName>OsmcRemoteClassic</AssemblyName>
+    <RootNamespace>OsmcRemote</RootNamespace>
+    <AssemblyName>OsmcRemote</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

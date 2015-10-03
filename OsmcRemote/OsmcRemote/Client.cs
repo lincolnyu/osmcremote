@@ -1,4 +1,4 @@
-﻿using OsmcRemoteClassic.Results;
+﻿using OsmcRemote.Results;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OsmcRemoteClassic
+namespace OsmcRemote
 {
     public class Client : IDisposable, INotifyPropertyChanged
     {

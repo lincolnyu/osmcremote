@@ -1,4 +1,4 @@
-﻿namespace OsmcRemoteClassic.Results
+﻿namespace OsmcRemote.Results
 {
     public class Limits
     {

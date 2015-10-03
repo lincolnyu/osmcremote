@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OsmcRemoteClassic\OsmcRemoteClassic.csproj">
+    <ProjectReference Include="..\OsmcRemote\OsmcRemote.csproj">
       <Project>{0c16e6c9-1560-4303-a8d3-b9a1cf4a4450}</Project>
-      <Name>OsmcRemoteClassic</Name>
+      <Name>OsmcRemote</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

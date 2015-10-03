@@ -1,7 +1,7 @@
 ﻿using JsonParser.Helpers;
 using JsonParser.JsonStructures;
 
-namespace OsmcRemoteClassic.Results
+namespace OsmcRemote.Results
 {
     public class Item
     {

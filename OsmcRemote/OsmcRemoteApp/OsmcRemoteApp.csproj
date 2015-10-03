@@ -145,9 +145,9 @@
       <Project>{46333d59-4372-458f-8fa6-c6f5bc55a111}</Project>
       <Name>OsmcRemoteAppCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OsmcRemoteClassic\OsmcRemoteClassic.csproj">
+    <ProjectReference Include="..\OsmcRemote\OsmcRemote.csproj">
       <Project>{0c16e6c9-1560-4303-a8d3-b9a1cf4a4450}</Project>
-      <Name>OsmcRemoteClassic</Name>
+      <Name>OsmcRemote</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace OsmcRemoteClassic
+namespace OsmcRemote
 {
     public class RequestJson
     {

@@ -1,4 +1,4 @@
-﻿using OsmcRemoteClassic;
+﻿using OsmcRemote;
 using System;
 using System.Threading.Tasks;
 

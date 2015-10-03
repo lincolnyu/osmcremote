@@ -3,7 +3,7 @@ using JsonParser.JsonStructures;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OsmcRemoteClassic.Results
+namespace OsmcRemote.Results
 {
     public class PlayersResult : Result
     {
