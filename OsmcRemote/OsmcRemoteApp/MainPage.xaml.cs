@@ -192,11 +192,13 @@ namespace OsmcRemoteApp
         {
             if (args.PropertyName == "IsConnected")
             {
-                RaisePropertyChangedEvent("AreButtonsEnabled");
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                { RaisePropertyChangedEvent("AreButtonsEnabled"); });
             }
             else if (args.PropertyName == "PlayersActive")
             {
-                RaisePropertyChangedEvent("PlayersActive");
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                 { RaisePropertyChangedEvent("PlayersActive"); });
             }
         }
 

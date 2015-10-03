@@ -190,13 +190,15 @@ namespace OsmcRemoteWP8
 
         private void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName == "IsConnectedd")
+            if (args.PropertyName == "IsConnected")
             {
-                RaisePropertyChangedEvent("AreButtonsEnabled");
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                { RaisePropertyChangedEvent("AreButtonsEnabled"); });
             }
             else if (args.PropertyName == "PlayersActive")
             {
-                RaisePropertyChangedEvent("PlayersActive");
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                { RaisePropertyChangedEvent("PlayersActive"); });
             }
         }
 

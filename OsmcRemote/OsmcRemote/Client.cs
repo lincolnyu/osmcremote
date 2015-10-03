@@ -317,8 +317,6 @@ namespace OsmcRemote
             if (IsConnected)
             {
                 UpdatePlaybackStatus();
-                _playerCheckTimer.Dispose();
-                _playerCheckTimer = null;
             }
         }
 
