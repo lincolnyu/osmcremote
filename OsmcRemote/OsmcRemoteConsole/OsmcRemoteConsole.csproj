@@ -50,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\jsonparser\JsonParser\JsonParser\JsonParser.csproj">
+      <Project>{BC9C47DB-A6C2-424E-99B1-EC9CC93E4701}</Project>
+      <Name>JsonParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OsmcRemote\OsmcRemote.csproj">
       <Project>{0c16e6c9-1560-4303-a8d3-b9a1cf4a4450}</Project>
       <Name>OsmcRemote</Name>

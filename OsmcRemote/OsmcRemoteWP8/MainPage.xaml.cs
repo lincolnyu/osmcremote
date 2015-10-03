@@ -79,7 +79,7 @@ namespace OsmcRemoteWP8
         {
             get
             {
-                return Client.Connected;
+                return Client.IsConnected;
             }
         }
 
@@ -190,7 +190,7 @@ namespace OsmcRemoteWP8
 
         private void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName == "Connected")
+            if (args.PropertyName == "IsConnectedd")
             {
                 RaisePropertyChangedEvent("AreButtonsEnabled");
             }

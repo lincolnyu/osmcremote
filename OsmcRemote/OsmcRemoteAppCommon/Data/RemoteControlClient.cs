@@ -10,25 +10,25 @@ namespace OsmcRemoteAppCommon.Data
     {
         #region Fields
 
-        private bool _connected;
+        private bool _isConnected;
         private bool _playersActive;
 
         #endregion
 
         #region Properties
 
-        public bool Connected
+        public bool IsConnected
         {
             get
             {
-                return _connected;
+                return _isConnected;
             }
             private set
             {
-                if (_connected != value)
+                if (_isConnected != value)
                 {
-                    _connected = value;
-                    RaisePropertyChangedEvent("Connected");
+                    _isConnected = value;
+                    RaisePropertyChangedEvent("IsConnected");
                 }
             }
         }
@@ -77,13 +77,12 @@ namespace OsmcRemoteAppCommon.Data
             {
                 Client.Dispose();
                 Client = null;
-                Connected = false;
+                IsConnected = false;
             }
             Client = new Client(serverAddress, userName, password);
             PlayersActive = Client.PlayersActive;
             Client.PropertyChanged += ClientPropertyChanged;
             var resp = await Client.Connect();
-            Connected = resp.IsSuccessStatusCode;
             return resp.StatusCode;
         }
 
@@ -92,6 +91,10 @@ namespace OsmcRemoteAppCommon.Data
             if (args.PropertyName == "PlayersActive")
             {
                 PlayersActive = Client.PlayersActive;
+            }
+            else if (args.PropertyName == "IsConnected")
+            {
+                IsConnected = Client.IsConnected;
             }
         }
 

@@ -25,7 +25,7 @@ namespace OsmcRemoteApp.Helpers
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
             var task = await client.Login(settings.ServerAddress, settings.UserName, settings.Password);
-            if (!client.Connected)
+            if (!client.IsConnected)
             {
                 var md = new MessageDialog("Error connecting to server");
                 await md.ShowAsync();

@@ -21,6 +21,7 @@ namespace OsmcRemote
 
         private Timer _playerCheckTimer;
         private bool _playersActive;
+        private bool _isConnected;
 
         #endregion
 
@@ -31,6 +32,8 @@ namespace OsmcRemote
             Address = address;
             UserName = username;
             Password = password;
+
+            UpdatePlayersCheckTimer();
         }
 
         #endregion
@@ -82,10 +85,23 @@ namespace OsmcRemote
             get { return _playersActive;  }
             set
             {
-                if (_playersActive)
+                if (_playersActive != value)
                 {
                     _playersActive = value;
                     RaisePropertyChangedEvent("PlayersActive");
+                }
+            }
+        }
+
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            set
+            {
+                if (_isConnected != value)
+                {
+                    _isConnected = value;
+                    RaisePropertyChangedEvent("IsConnected");
                 }
             }
         }
@@ -108,6 +124,7 @@ namespace OsmcRemote
             {
                 _httpClient.Dispose();
                 _httpClient = null;
+                IsConnected = false;
             }
             if (_playerCheckTimer != null)
             {
@@ -141,6 +158,7 @@ namespace OsmcRemote
             //defHeader.CacheControl = cacheControl;
 
             var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
+            IsConnected = response.IsSuccessStatusCode;
             return response;
         }
 
@@ -259,7 +277,6 @@ namespace OsmcRemote
         }
 
         
-
         public async void UpdatePlaybackStatus()
         {
             var respPlayers = await Post("Player.GetActivePlayers");
@@ -289,12 +306,20 @@ namespace OsmcRemote
                 _playerCheckTimer.Dispose();
                 _playerCheckTimer = null;
             }
-            _playerCheckTimer = new Timer(UpdatePlayers, null, 0, PlayersCheckInterval * 1000);
+            if (PlayersCheckInterval > 0)
+            {
+                _playerCheckTimer = new Timer(TimerDriveUpdatePlayback, null, 0, PlayersCheckInterval * 1000);
+            }
         }
 
-        private void UpdatePlayers(object state)
+        private void TimerDriveUpdatePlayback(object state)
         {
-            UpdatePlaybackStatus();
+            if (IsConnected)
+            {
+                UpdatePlaybackStatus();
+                _playerCheckTimer.Dispose();
+                _playerCheckTimer = null;
+            }
         }
 
         private void RaisePropertyChangedEvent(string propertyName)
