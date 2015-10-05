@@ -259,10 +259,33 @@ namespace OsmcRemoteWP8
             await Client.Client.ShutDown();
         }
 
-
         private async void StopOnClick(object sender, RoutedEventArgs e)
         {
             await Client.Client.Stop();
+        }
+
+        private async void SetSpeedIncrementOnClick(object sender, RoutedEventArgs e)
+        {
+            await Client.Client.SetSpeedIncrement();
+        }
+
+        private async void SetSpeedDecrementOnClick(object sender, RoutedEventArgs e)
+        {
+            await Client.Client.SetSpeedDecrement();
+        }
+        private async void GoToPreviousOnClick(object sender, RoutedEventArgs e)
+        {
+            await Client.Client.GoToPrevious();
+        }
+
+        private async void GoToNextOnClick(object sender, RoutedEventArgs e)
+        {
+            await Client.Client.GoToNext();
+        }
+
+        private async void MuteButtonClick(object sender, RoutedEventArgs e)
+        {
+            await Client.Client.SetMute();
         }
 
         #endregion

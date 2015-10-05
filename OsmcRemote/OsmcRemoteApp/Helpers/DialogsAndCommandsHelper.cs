@@ -24,10 +24,22 @@ namespace OsmcRemoteApp.Helpers
         {
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
-            var task = await client.Login(settings.ServerAddress, settings.UserName, settings.Password);
-            if (!client.IsConnected)
+            string errorMessage = null;
+            try
             {
-                var md = new MessageDialog("Error connecting to server");
+                var task = await client.Login(settings.ServerAddress, settings.UserName, settings.Password);
+                if (!client.IsConnected)
+                {
+                    errorMessage = "Error connecting to server";
+                }
+            }
+            catch (Exception e)
+            {
+                errorMessage = string.Format("Exception raises when connecting to server: {0}", e.Message);
+            }
+            if (errorMessage != null)
+            {
+                var md = new MessageDialog(errorMessage);
                 await md.ShowAsync();
             }
         }

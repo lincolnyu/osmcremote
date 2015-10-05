@@ -19,7 +19,8 @@ namespace OsmcRemote
 
         public int _playersCheckInterval = 5;
 
-        private Timer _playerCheckTimer;
+        private Timer _osmcAndPlayerCheckTimer;
+
         private bool _playersActive;
         private bool _isConnected;
 
@@ -32,8 +33,6 @@ namespace OsmcRemote
             Address = address;
             UserName = username;
             Password = password;
-
-            UpdatePlayersCheckTimer();
         }
 
         #endregion
@@ -126,10 +125,10 @@ namespace OsmcRemote
                 _httpClient = null;
                 IsConnected = false;
             }
-            if (_playerCheckTimer != null)
+            if (_osmcAndPlayerCheckTimer != null)
             {
-                _playerCheckTimer.Dispose();
-                _playerCheckTimer = null;
+                _osmcAndPlayerCheckTimer.Dispose();
+                _osmcAndPlayerCheckTimer = null;
             }
         }
 
@@ -159,6 +158,10 @@ namespace OsmcRemote
 
             var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
             IsConnected = response.IsSuccessStatusCode;
+
+            UpdatePlayersCheckTimer();
+
+
             return response;
         }
 
@@ -224,9 +227,35 @@ namespace OsmcRemote
             return await Post("Application.SetMute", new KeyValuePair<string, object>("mute", "toggle"));
         }
 
+        public async Task<ResponseJson> SetSpeedIncrement()
+        {
+            return await SetSpeed(true);
+        }
+
+        public async Task<ResponseJson> SetSpeedDecrement()
+        {
+            return await SetSpeed(false);
+        }
+
+        private async Task<ResponseJson> SetSpeed(bool increment)
+        {
+            var playerId = GetPlayerId();
+            if (playerId < 0)
+            {
+                return null;
+            }
+            return await Post("Player.SetSpeed", new KeyValuePair<string, object>[]
+            {
+                new KeyValuePair<string, object>("playerid", playerId),
+                new KeyValuePair<string, object>("speed", increment? "increment":"decrement")
+            });
+        }
+
         public async Task<ResponseJson> ShutDown()
         {
-            return await Post("System.Shutdown");
+            var res = await Post("System.Shutdown");
+            IsConnected = false;
+            return res;
         }
 
         public async Task<ResponseJson> PlayPause()
@@ -250,6 +279,29 @@ namespace OsmcRemote
 
             return await Post("Player.Stop", new KeyValuePair<string, object>("playerid", playerId));
         }
+        public async Task<ResponseJson> GoToPrevious()
+        {
+            return await GoTo(false);
+        }
+
+        public async Task<ResponseJson> GoToNext()
+        {
+            return await GoTo(true);
+        }
+
+        private async Task<ResponseJson> GoTo(bool next)
+        {
+            var playerId = GetPlayerId();
+            if (playerId < 0)
+            {
+                return null;
+            }
+            return await Post("Player.GoTo", new KeyValuePair<string, object>[]
+            {
+                new KeyValuePair<string, object>("playerid", playerId),
+                new KeyValuePair<string, object>("to", next? "next":"previous")
+            });
+        }
 
         private int GetPlayerId()
         {
@@ -262,6 +314,7 @@ namespace OsmcRemote
             return playerId;
         }
 
+      
         public async Task<ResponseJson> Post(string method, params KeyValuePair<string, object>[] kvps)
         {
             var url = GetRpcUrl(method);
@@ -301,22 +354,26 @@ namespace OsmcRemote
 
         private void UpdatePlayersCheckTimer()
         {
-            if (_playerCheckTimer != null)
+            if (_osmcAndPlayerCheckTimer != null)
             {
-                _playerCheckTimer.Dispose();
-                _playerCheckTimer = null;
+                _osmcAndPlayerCheckTimer.Dispose();
+                _osmcAndPlayerCheckTimer = null;
             }
             if (PlayersCheckInterval > 0)
             {
-                _playerCheckTimer = new Timer(TimerDriveUpdatePlayback, null, 0, PlayersCheckInterval * 1000);
+                _osmcAndPlayerCheckTimer = new Timer(TimerDrivenUpdate, null, 0, PlayersCheckInterval * 1000);
             }
         }
 
-        private void TimerDriveUpdatePlayback(object state)
+        private async void TimerDrivenUpdate(object state)
         {
             if (IsConnected)
             {
                 UpdatePlaybackStatus();
+            }
+            else
+            {
+                await Connect();
             }
         }
 

@@ -34,7 +34,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
             <Button Content="Power" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Background="Red" Click="PowerButtonOnClick"></Button>
-            <Button Content="Mute" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}"></Button>
+            <Button Content="Mute" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Click="MuteButtonClick"></Button>
         </StackPanel>
         <Button Content="Back" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="0" Click="BackButtonOnClick"></Button>
         <Button Content="Home" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="2" Click="HomeButtonOnClick"></Button>
@@ -47,8 +47,14 @@
         <Button Content="OK" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="1" Name="OkButton" SizeChanged="OkButtonSizeChanged" LayoutUpdated="OkButtonLayoutUpdated" Style="{StaticResource BigButton}" Click="OkButtonOnClick"></Button>
         <Button Content="&#xE086;" FontFamily="Segoe UI Symbol" Grid.Row="1" Grid.Column="2" Style="{StaticResource BigButton}" Click="RightButtonOnClick"></Button>
         <Button Content="&#xE08b;" FontFamily="Segoe UI Symbol" Grid.Row="2" Grid.Column="1" Style="{StaticResource BigButton}" Click="DownButtonOnClick"></Button>
-        <Button Content="&lt;&lt;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="0"></Button>
-        <Button Content="&gt;&gt;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Grid.Row="3" Grid.Column="2"></Button>
+        <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="0" >
+            <Button Content="&lt;&lt;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="SetSpeedDecrementOnClick"></Button>
+            <Button Content="|&lt;&lt;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="GoToPreviousOnClick"></Button>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="2" >
+            <Button Content="&gt;&gt;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="SetSpeedIncrementOnClick"></Button>
+            <Button Content="&gt;&gt;|" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="GoToNextOnClick"></Button>
+        </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="3" Grid.Column="1">
             <Button Content="&#xE102;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="PlayPauseOnClick"></Button>
             <Button Content="&#xE20D;" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" IsEnabled="{Binding PlayersActive}" FontFamily="Segoe UI Symbol" Click="StopOnClick"></Button>
