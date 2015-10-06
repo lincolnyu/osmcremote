@@ -1,11 +1,15 @@
-﻿using OsmcRemoteAppCommon.Data;
-using OsmcRemoteWP8.Commands;
-using OsmcRemoteWP8.Helpers;
+﻿using System;
 using System.ComponentModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+using OsmcRemoteAppCommon.Data;
+using OsmcRemoteWP8.Commands;
+using OsmcRemoteWP8.Helpers;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -22,6 +26,9 @@ namespace OsmcRemoteWP8
 
         private double _smallButtonHeight;
 
+        private bool _blinkingStoryboardRunning;
+        private Storyboard _blinkingStoryboard;
+
         #endregion
 
         #region Constructors
@@ -36,7 +43,30 @@ namespace OsmcRemoteWP8
 
             SetupEventHandling();
 
+            SetupStoryboard();
+
             DataContext = this;
+        }
+
+        private void SetupStoryboard()
+        {
+            var anim = new DoubleAnimation();
+            var duration = new Duration(TimeSpan.FromMilliseconds(500));
+            anim.From = 1.0;
+            anim.To = 0.0;
+            anim.Duration = duration;
+            anim.AutoReverse = true;
+            anim.RepeatBehavior = RepeatBehavior.Forever;
+            _blinkingStoryboard = new Storyboard();
+            _blinkingStoryboard.Children.Add(anim);
+            Storyboard.SetTarget(anim, PowerBorder);
+            Storyboard.SetTargetProperty(anim, "Opacity");
+
+            if (Client.ConnectionIndicatorStatus == ConnectionIndicatorStatuses.Checking)
+            {
+                _blinkingStoryboard.Begin();
+                _blinkingStoryboardRunning = true;
+            }
         }
 
         #endregion
@@ -75,7 +105,7 @@ namespace OsmcRemoteWP8
             }
         }
 
-        public bool AreButtonsEnabled
+        public bool IsConnected
         {
             get
             {
@@ -88,6 +118,14 @@ namespace OsmcRemoteWP8
             get
             {
                 return Client.PlayersActive;
+            }
+        }
+
+        public ConnectionIndicatorStatuses ConnectionIndicatorStatus
+        {
+            get
+            {
+                return Client.ConnectionIndicatorStatus;
             }
         }
 
@@ -188,17 +226,37 @@ namespace OsmcRemoteWP8
             Client.PropertyChanged += ClientOnPropertyChanged;
         }
 
-        private void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        private async void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName == "IsConnected")
+            switch (args.PropertyName)
             {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                { RaisePropertyChangedEvent("AreButtonsEnabled"); });
+                case "IsConnected":
+                case "PlayersActive":
+                case "ConnectionIndicatorStatus":
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    { RaisePropertyChangedEvent(args.PropertyName); });
+                    break;
             }
-            else if (args.PropertyName == "PlayersActive")
+            if (args.PropertyName == "ConnectionIndicatorStatus")
             {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                { RaisePropertyChangedEvent("PlayersActive"); });
+                if (Client.ConnectionIndicatorStatus == ConnectionIndicatorStatuses.Checking)
+                {
+                    if (!_blinkingStoryboardRunning)
+                    {
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                            () => _blinkingStoryboard.Begin());
+                        _blinkingStoryboardRunning = true;
+                    }
+                }
+                else
+                {
+                    if (_blinkingStoryboardRunning)
+                    {   
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                            () => _blinkingStoryboard.Stop());
+                        _blinkingStoryboardRunning = false;
+                    }
+                }
             }
         }
 

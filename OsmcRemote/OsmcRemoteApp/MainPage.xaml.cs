@@ -1,12 +1,16 @@
 ﻿using System;
-using OsmcRemoteApp.Commands;
-using OsmcRemoteAppCommon.Data;
-using OsmcRemoteApp.Helpers;
 using System.ComponentModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+using OsmcRemoteAppCommon.Data;
+using OsmcRemoteApp.Commands;
+using OsmcRemoteApp.Helpers;
+
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -23,6 +27,9 @@ namespace OsmcRemoteApp
 
         private double _smallButtonHeight;
 
+        private bool _blinkingStoryboardRunning;
+        private Storyboard _blinkingStoryboard;
+
         #endregion
 
         #region Constructors
@@ -37,7 +44,30 @@ namespace OsmcRemoteApp
 
             SetupEventHandling();
 
+            SetupStoryboard();
+
             DataContext = this;
+        }
+
+        private void SetupStoryboard()
+        {
+            var anim = new DoubleAnimation();
+            var duration = new Duration(TimeSpan.FromMilliseconds(500));
+            anim.From = 1.0;
+            anim.To = 0.0;
+            anim.Duration = duration;
+            anim.AutoReverse = true;
+            anim.RepeatBehavior = RepeatBehavior.Forever;
+            _blinkingStoryboard = new Storyboard();
+            _blinkingStoryboard.Children.Add(anim);
+            Storyboard.SetTarget(anim, PowerBorder);
+            Storyboard.SetTargetProperty(anim, "Opacity");
+
+            if (Client.ConnectionIndicatorStatus == ConnectionIndicatorStatuses.Checking)
+            {
+                _blinkingStoryboard.Begin();
+                _blinkingStoryboardRunning = true;
+            }
         }
 
         #endregion
@@ -207,6 +237,27 @@ namespace OsmcRemoteApp
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     { RaisePropertyChangedEvent(args.PropertyName); });
                     break;
+            }
+            if (args.PropertyName == "ConnectionIndicatorStatus")
+            {
+                if (Client.ConnectionIndicatorStatus == ConnectionIndicatorStatuses.Checking)
+                {
+                    if (!_blinkingStoryboardRunning)
+                    {
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                            () => _blinkingStoryboard.Begin());
+                        _blinkingStoryboardRunning = true;
+                    }
+                }
+                else
+                {
+                    if (_blinkingStoryboardRunning)
+                    {   
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                            () => _blinkingStoryboard.Stop());
+                        _blinkingStoryboardRunning = false;
+                    }
+                }
             }
         }
 

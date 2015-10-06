@@ -35,7 +35,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
-            <Border BorderThickness="3" BorderBrush="{Binding ConnectionIndicatorStatus, Converter={StaticResource ConvectionIndicatorStatusToBrushConverter}}" 
+            <Border Name="PowerBorder" BorderThickness="3" BorderBrush="{Binding ConnectionIndicatorStatus, Converter={StaticResource ConvectionIndicatorStatusToBrushConverter}}" 
                     Width="{Binding ActualWidth, ElementName=PowerButton}"
                     Height="{Binding ActualHeight, ElementName=PowerButton}">
                 <Button Content="Power" Name="PowerButton" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Background="Red" Click="PowerButtonOnClick"></Button>
