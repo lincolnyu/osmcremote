@@ -20,28 +20,11 @@ namespace OsmcRemoteApp.Helpers
             }
         }
 
-        public static async Task RunLogin()
+        public static void RunLogin()
         {
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
-            string errorMessage = null;
-            try
-            {
-                var task = await client.Login(settings.ServerAddress, settings.UserName, settings.Password);
-                if (!client.IsConnected)
-                {
-                    errorMessage = "Error connecting to server";
-                }
-            }
-            catch (Exception e)
-            {
-                errorMessage = string.Format("Exception raises when connecting to server: {0}", e.Message);
-            }
-            if (errorMessage != null)
-            {
-                var md = new MessageDialog(errorMessage);
-                await md.ShowAsync();
-            }
+            client.Login(settings.ServerAddress, settings.UserName, settings.Password);
         }
     }
 }

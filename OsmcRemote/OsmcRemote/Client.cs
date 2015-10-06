@@ -13,11 +13,28 @@ namespace OsmcRemote
 {
     public class Client : IDisposable, INotifyPropertyChanged
     {
+        #region Nested types
+
+        public class CheckedConnectionEventArgs : EventArgs
+        {
+            public CheckedConnectionEventArgs(HttpResponseMessage response)
+            {
+                Response = response;
+            }
+
+            public HttpResponseMessage Response { get; private set; }
+        }
+
+        public delegate void CheckedConnectionEventHandler(object sender, CheckedConnectionEventArgs args);
+
+        #endregion
+
         #region Fields
 
         public HttpClient _httpClient;
 
         public int _playersCheckInterval = 5;
+        public int _timerDueTime = 5;
 
         private Timer _osmcAndPlayerCheckTimer;
 
@@ -111,6 +128,10 @@ namespace OsmcRemote
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public event EventHandler CheckingConnection;
+
+        public event CheckedConnectionEventHandler CheckedConnection;
+
         #endregion
 
         #region Methods
@@ -134,12 +155,13 @@ namespace OsmcRemote
 
         #endregion
 
-        public async Task<HttpResponseMessage> Connect()
+        public void Start()
         {
-            //var handler = new HttpClientHandler();
-            //handler.UseDefaultCredentials = false;
-            //_httpClient = new HttpClient(handler);
+            UpdatePlayersCheckTimer();
+        }
 
+        private async Task<HttpResponseMessage> Connect()
+        {
             _httpClient = new HttpClient();
             var credentialString = string.Format("{0}:{1}", UserName, Password);
 
@@ -156,13 +178,17 @@ namespace OsmcRemote
             //cacheControl.NoCache = true;
             //defHeader.CacheControl = cacheControl;
 
-            var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
-            IsConnected = response.IsSuccessStatusCode;
-
-            UpdatePlayersCheckTimer();
-
-
-            return response;
+            try
+            {
+                var response = await _httpClient.GetAsync(MainUrl, HttpCompletionOption.ResponseHeadersRead);
+                IsConnected = response.IsSuccessStatusCode;
+                return response;
+            }
+            catch (Exception)
+            {
+                IsConnected = false;
+                return null;
+            }
         }
 
         private static IEnumerable<byte> GetAsciiBytes(string str)
@@ -329,7 +355,6 @@ namespace OsmcRemote
             return responseJson;
         }
 
-        
         public async void UpdatePlaybackStatus()
         {
             var respPlayers = await Post("Player.GetActivePlayers");
@@ -361,7 +386,7 @@ namespace OsmcRemote
             }
             if (PlayersCheckInterval > 0)
             {
-                _osmcAndPlayerCheckTimer = new Timer(TimerDrivenUpdate, null, 0, PlayersCheckInterval * 1000);
+                _osmcAndPlayerCheckTimer = new Timer(TimerDrivenUpdate, null, _timerDueTime, PlayersCheckInterval * 1000);
             }
         }
 
@@ -373,7 +398,18 @@ namespace OsmcRemote
             }
             else
             {
-                await Connect();
+                if (CheckingConnection != null)
+                {
+                    CheckingConnection(this, new EventArgs());
+                }
+
+                var resp = await Connect();
+
+                if (CheckedConnection != null)
+                {
+                    var args = new CheckedConnectionEventArgs(resp);
+                    CheckedConnection(this, args);
+                }
             }
         }
 

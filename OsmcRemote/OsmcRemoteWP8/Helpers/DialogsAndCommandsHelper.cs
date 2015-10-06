@@ -20,16 +20,11 @@ namespace OsmcRemoteWP8.Helpers
             }
         }
 
-        public static async Task RunLogin()
+        public static void RunLogin()
         {
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
-            var task = await client.Login(settings.ServerAddress, settings.UserName, settings.Password);
-            if (!client.IsConnected)
-            {
-                var md = new MessageDialog("Error connecting to server");
-                await md.ShowAsync();
-            }
+            client.Login(settings.ServerAddress, settings.UserName, settings.Password);
         }
     }
 }

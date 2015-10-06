@@ -41,6 +41,8 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\ConvectionIndicatorStatusToBrushConverter.cs" />
+    <Compile Include="Data\ConnectionIndicatorStatuses.cs" />
     <Compile Include="Data\RemoteControlClient.cs" />
     <Compile Include="Data\SettingsData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

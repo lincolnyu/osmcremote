@@ -3,13 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OsmcRemoteApp"
+    xmlns:converters="using:OsmcRemoteAppCommon.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    IsEnabled="{Binding AreButtonsEnabled}"
+    IsEnabled="{Binding IsConnected}"
     Loaded="PageOnLoaded">
     <Grid>
         <Grid.Resources>
+            <converters:ConvectionIndicatorStatusToBrushConverter x:Key="ConvectionIndicatorStatusToBrushConverter"/>
             <Style TargetType="Button" x:Key="BigButton">
                 <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
                 <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
@@ -33,7 +35,11 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
-            <Button Content="Power" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Background="Red" Click="PowerButtonOnClick"></Button>
+            <Border BorderThickness="3" BorderBrush="{Binding ConnectionIndicatorStatus, Converter={StaticResource ConvectionIndicatorStatusToBrushConverter}}" 
+                    Width="{Binding ActualWidth, ElementName=PowerButton}"
+                    Height="{Binding ActualHeight, ElementName=PowerButton}">
+                <Button Content="Power" Name="PowerButton" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Background="Red" Click="PowerButtonOnClick"></Button>
+            </Border>
             <Button Content="Mute" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Click="MuteButtonClick"></Button>
         </StackPanel>
         <Button Content="Back" Style="{StaticResource SmallButton}" Width="{Binding SmallButtonWidth}" Height="{Binding SmallButtonHeight}" Grid.Row="2" Grid.Column="0" Click="BackButtonOnClick"></Button>

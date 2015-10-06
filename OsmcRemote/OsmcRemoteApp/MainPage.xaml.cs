@@ -1,4 +1,5 @@
-﻿using OsmcRemoteApp.Commands;
+﻿using System;
+using OsmcRemoteApp.Commands;
 using OsmcRemoteAppCommon.Data;
 using OsmcRemoteApp.Helpers;
 using System.ComponentModel;
@@ -75,7 +76,7 @@ namespace OsmcRemoteApp
             }
         }
 
-        public bool AreButtonsEnabled
+        public bool IsConnected
         {
             get
             {
@@ -88,6 +89,14 @@ namespace OsmcRemoteApp
             get
             {
                 return Client.PlayersActive;
+            }
+        }
+
+        public ConnectionIndicatorStatuses ConnectionIndicatorStatus
+        {
+            get
+            {
+                return Client.ConnectionIndicatorStatus;
             }
         }
 
@@ -188,17 +197,16 @@ namespace OsmcRemoteApp
             Client.PropertyChanged += ClientOnPropertyChanged;
         }
 
-        private void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        private async void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName == "IsConnected")
+            switch (args.PropertyName)
             {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                { RaisePropertyChangedEvent("AreButtonsEnabled"); });
-            }
-            else if (args.PropertyName == "PlayersActive")
-            {
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                { RaisePropertyChangedEvent("PlayersActive"); });
+                case "IsConnected":
+                case "PlayersActive":
+                case "ConnectionIndicatorStatus":
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    { RaisePropertyChangedEvent(args.PropertyName); });
+                    break;
             }
         }
 
