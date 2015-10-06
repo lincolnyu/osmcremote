@@ -192,8 +192,12 @@ namespace OsmcRemoteWP8
 
         private void UpdateSmallButtonSize(Size largeButtonSize)
         {
-            var w = largeButtonSize.Width / 3;
-            var h = w / 2;
+            var h = largeButtonSize.Height / 2;
+            var w = h * 2;
+            if (w > largeButtonSize.Width)
+            {
+                w = largeButtonSize.Width;
+            }
             SmallButtonWidth = w;
             SmallButtonHeight = h;
         }
