@@ -21,7 +21,8 @@
         <!-- Content body -->
         <TextBlock x:Name="body" Style="{StaticResource MessageDialogContentStyle}" TextWrapping="Wrap">
             <TextBlock.Text>
-                Please input the address of the OSDM web server for remote control and the credentials
+                Please input the address of the OSDM web server for remote control and the credentials.
+                The app will attempt to connect to the server. Once connected the power button will be enclosed by a green box and the panel will be enabled.
             </TextBlock.Text>
         </TextBlock>
     </StackPanel>
