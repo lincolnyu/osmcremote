@@ -90,7 +90,7 @@ namespace OsmcRemoteWP8
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 
                 Settings.LoadCredentials();
-                if (LoginCommand.CanExecute(null))
+                if (Settings.CredentialsLoaded)
                 {
                     LoginCommand.Execute(null);
                 }

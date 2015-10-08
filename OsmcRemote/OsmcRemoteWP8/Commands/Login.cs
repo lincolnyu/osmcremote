@@ -11,7 +11,7 @@ namespace OsmcRemoteWP8.Commands
 
         public bool CanExecute(object parameter)
         {
-            return ((App)Application.Current).Settings.CredentialsLoaded;
+            return true;
         }
 
         public void Execute(object parameter)

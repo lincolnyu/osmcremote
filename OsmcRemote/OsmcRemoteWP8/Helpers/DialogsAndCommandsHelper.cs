@@ -11,9 +11,8 @@ namespace OsmcRemoteWP8.Helpers
         public static async Task ShowAuthenticationDialog(Login login)
         {
             var dialog = new AuthenticationDialog();
-            await dialog.ShowAsync();
-
-            if (login.CanExecute(null))
+            var res = await dialog.ShowAsync();
+            if (res == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 login.Execute(null);
             }
