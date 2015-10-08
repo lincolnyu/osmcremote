@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="62356quanbenSoft.OSMCRemote" Publisher="CN=98D59B96-F0DA-47DE-98FF-E00125CD4177" Version="1.1.0.0" />
+  <Identity Name="62356quanbenSoft.OSMCRemote" Publisher="CN=98D59B96-F0DA-47DE-98FF-E00125CD4177" Version="1.1.0.1" />
   <mp:PhoneIdentity PhoneProductId="f3ad780a-0f27-4d82-b72f-d50f60e13313" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>OSMC Remote</DisplayName>
