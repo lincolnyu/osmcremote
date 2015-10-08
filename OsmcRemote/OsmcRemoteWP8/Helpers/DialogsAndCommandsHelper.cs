@@ -2,7 +2,6 @@
 using OsmcRemoteWP8.Views;
 using System;
 using System.Threading.Tasks;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 
 namespace OsmcRemoteWP8.Helpers

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using OsmcRemoteApp.Views;
 using OsmcRemoteApp.Helpers;
 using Windows.UI.Xaml;
 

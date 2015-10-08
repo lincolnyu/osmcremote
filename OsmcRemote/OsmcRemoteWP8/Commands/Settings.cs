@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using OsmcRemoteWP8.Views;
 using OsmcRemoteWP8.Helpers;
 using Windows.UI.Xaml;
 

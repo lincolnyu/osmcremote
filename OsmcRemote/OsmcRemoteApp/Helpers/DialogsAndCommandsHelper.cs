@@ -2,7 +2,6 @@
 using OsmcRemoteApp.Views;
 using System;
 using System.Threading.Tasks;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 
 namespace OsmcRemoteApp.Helpers
