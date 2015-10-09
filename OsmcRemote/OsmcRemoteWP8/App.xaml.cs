@@ -1,5 +1,4 @@
 ﻿using OsmcRemoteAppCommon.Data;
-using OsmcRemoteWP8.Commands;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -28,9 +27,7 @@ namespace OsmcRemoteWP8
             InitializeComponent();
             Suspending += OnSuspending;
         }
-
-        public Login LoginCommand { get; private set; } = new Login();
-
+        
         public SettingsData Settings { get; private set; } = new SettingsData();
 
         public RemoteControlClient Client { get; private set; } = new RemoteControlClient();
@@ -90,10 +87,6 @@ namespace OsmcRemoteWP8
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
 
                 Settings.LoadCredentials();
-                if (Settings.CredentialsLoaded)
-                {
-                    LoginCommand.Execute(null);
-                }
 
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation

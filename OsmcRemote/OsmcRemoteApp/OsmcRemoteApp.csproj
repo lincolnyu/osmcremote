@@ -99,7 +99,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Commands\Login.cs" />
     <Compile Include="Commands\Settings.cs" />
     <Compile Include="Helpers\DialogsAndCommandsHelper.cs" />
     <Compile Include="MainPage.xaml.cs">

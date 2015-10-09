@@ -1,6 +1,4 @@
 ﻿using OsmcRemote;
-using System.Threading.Tasks;
-using System.Net;
 using System.ComponentModel;
 using System;
 
@@ -77,6 +75,23 @@ namespace OsmcRemoteAppCommon.Data
 
         public void Dispose()
         {
+            Disconnect();
+        }
+
+        public void Connect(string serverAddress, string userName, string password)
+        {
+            Disconnect();
+
+            Client = new Client(serverAddress, userName, password);
+            PlayersActive = Client.PlayersActive;
+            Client.PropertyChanged += ClientOnPropertyChanged;
+            Client.CheckingConnection += ClientOnCheckingConnection;
+            Client.CheckedConnection += ClientOnCheckedConnection;
+            Client.Start();
+        }
+
+        public void Disconnect()
+        {
             if (Client != null)
             {
                 Client.PropertyChanged -= ClientOnPropertyChanged;
@@ -85,22 +100,6 @@ namespace OsmcRemoteAppCommon.Data
                 Client.Dispose();
                 Client = null;
             }
-        }
-
-        public void Login(string serverAddress, string userName, string password)
-        {
-            if (Client != null)
-            {
-                Client.Dispose();
-                Client = null;
-                IsConnected = false;
-            }
-            Client = new Client(serverAddress, userName, password);
-            PlayersActive = Client.PlayersActive;
-            Client.PropertyChanged += ClientOnPropertyChanged;
-            Client.CheckingConnection += ClientOnCheckingConnection;
-            Client.CheckedConnection += ClientOnCheckedConnection;
-            Client.Start();
         }
 
         private void ClientOnPropertyChanged(object sender, PropertyChangedEventArgs args)

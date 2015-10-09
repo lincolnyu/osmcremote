@@ -5,8 +5,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI;
-using Windows.UI.Xaml.Media;
 using OsmcRemoteAppCommon.Data;
 using OsmcRemoteWP8.Commands;
 using OsmcRemoteWP8.Helpers;
@@ -175,13 +173,24 @@ namespace OsmcRemoteWP8
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+
+            base.OnNavigatedTo(args);
+
+            DialogsAndCommandsHelper.Connect();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            DialogsAndCommandsHelper.Disconnect();
+
+            base.OnNavigatedFrom(e);
         }
 
         private async void ShowAuthenticationDialog()
         {
             if (!Settings.CredentialsLoaded)
             {
-                await DialogsAndCommandsHelper.ShowAuthenticationDialog(((App)Application.Current).LoginCommand);
+                await DialogsAndCommandsHelper.ShowAuthenticationDialog();
             }
         }
 

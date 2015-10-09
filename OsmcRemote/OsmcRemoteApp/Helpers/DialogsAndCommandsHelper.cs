@@ -8,22 +8,27 @@ namespace OsmcRemoteApp.Helpers
 {
     class DialogsAndCommandsHelper
     {
-        public static async Task ShowAuthenticationDialog(Login login)
+        public static async Task ShowAuthenticationDialog()
         {
             var dialog = new AuthenticationDialog();
-            await dialog.ShowAsync();
-
-            if (login.CanExecute(null))
+            var res = await dialog.ShowAsync();
+            if (res == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
-                login.Execute(null);
+                Connect();
             }
         }
 
-        public static void RunLogin()
+        public static void Connect()
         {
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
-            client.Login(settings.ServerAddress, settings.UserName, settings.Password);
+            client.Connect(settings.ServerAddress, settings.UserName, settings.Password);
+        }
+
+        public static void Disconnect()
+        {
+            var client = ((App)Application.Current).Client;
+            client.Disconnect();
         }
     }
 }

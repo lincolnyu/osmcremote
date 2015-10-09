@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using OsmcRemoteApp.Helpers;
-using Windows.UI.Xaml;
 
 namespace OsmcRemoteApp.Commands
 {
@@ -16,8 +15,7 @@ namespace OsmcRemoteApp.Commands
 
         public async void Execute(object parameter)
         {
-            var login = ((App)Application.Current).LoginCommand;
-            await DialogsAndCommandsHelper.ShowAuthenticationDialog(login);
+            await DialogsAndCommandsHelper.ShowAuthenticationDialog();
         }
     }
 }

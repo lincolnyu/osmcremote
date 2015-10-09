@@ -1,5 +1,4 @@
-﻿using OsmcRemoteApp.Commands;
-using OsmcRemoteAppCommon.Data;
+﻿using OsmcRemoteAppCommon.Data;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -26,8 +25,6 @@ namespace OsmcRemoteApp
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
-
-        public Login LoginCommand { get; private set; } = new Login();
 
         public SettingsData Settings { get; private set; } = new SettingsData();
 
@@ -71,10 +68,6 @@ namespace OsmcRemoteApp
             if (rootFrame.Content == null)
             {
                 Settings.LoadCredentials();
-                if (LoginCommand.CanExecute(null))
-                {
-                    LoginCommand.Execute(null);
-                }
 
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
