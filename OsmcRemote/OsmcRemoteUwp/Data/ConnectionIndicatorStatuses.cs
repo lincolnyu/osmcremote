@@ -1,4 +1,4 @@
-﻿namespace OsmcRemoteAppCommon.Data
+﻿namespace OsmcRemoteUwp.Data
 {
     public enum ConnectionIndicatorStatuses
     {

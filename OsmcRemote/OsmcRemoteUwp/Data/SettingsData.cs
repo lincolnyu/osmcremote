@@ -1,6 +1,6 @@
 ﻿using Windows.Storage;
 
-namespace OsmcRemoteAppCommon.Data
+namespace OsmcRemoteUwp.Data
 {
     public class SettingsData
     {

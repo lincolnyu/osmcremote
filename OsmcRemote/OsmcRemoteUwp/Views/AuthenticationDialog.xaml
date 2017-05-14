@@ -1,0 +1,29 @@
+﻿<ContentDialog
+    x:Class="OsmcRemoteUwp.Views.AuthenticationDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OsmcRemoteUwp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Server authentication"
+    Loaded="DialogLoaded" 
+    PrimaryButtonText="OK"  
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="OkButtonOnClick"
+    SecondaryButtonClick="CancelButtonOnClick">
+
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <TextBox x:Name="ServerAddressTextBox" Header="Server Address"/>
+        <TextBox x:Name="UserNameTextBox" Header="User Name"/>
+        <PasswordBox x:Name="PasswordBox" Header="Password"/>
+
+        <!-- Content body -->
+        <TextBlock x:Name="body" TextWrapping="Wrap">
+            <TextBlock.Text>
+                Please input the address of the OSDM web server for remote control and the credentials Please input the address of the OSDM web server for remote control and the credentials which may be case sensitive.
+                The app will attempt to connect to the server. Once connected the power button will be enclosed by a green box and the panel will be enabled.
+            </TextBlock.Text>
+        </TextBlock>
+    </StackPanel>
+</ContentDialog>

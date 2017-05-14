@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System;
 
-namespace OsmcRemoteAppCommon.Data
+namespace OsmcRemoteUwp.Data
 {
     public class RemoteControlClient : INotifyPropertyChanged, IDisposable
     {

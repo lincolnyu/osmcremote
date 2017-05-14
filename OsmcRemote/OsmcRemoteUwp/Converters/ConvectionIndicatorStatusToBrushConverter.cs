@@ -1,10 +1,10 @@
-﻿using OsmcRemoteAppCommon.Data;
+﻿using OsmcRemoteUwp.Data;
 using System;
 using Windows.UI;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
-namespace OsmcRemoteAppCommon.Converters
+namespace OsmcRemoteUwp.Converters
 {
     public class ConvectionIndicatorStatusToBrushConverter : IValueConverter
     {
