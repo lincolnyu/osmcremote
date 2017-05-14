@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace OsmcRemote
@@ -33,13 +32,10 @@ namespace OsmcRemote
 
         public HttpClient _httpClient;
 
-        public int _playersCheckInterval = 5;
-        public int _timerDueTime = 5;
-
-        private Timer _osmcAndPlayerCheckTimer;
-
         private bool _playersActive;
         private bool _isConnected;
+
+        private bool _isCheckerRunning;
 
         #endregion
 
@@ -77,18 +73,7 @@ namespace OsmcRemote
         /// <summary>
         ///  In seconds
         /// </summary>
-        public int PlayersCheckInterval
-        {
-            get { return _playersCheckInterval; } 
-            set
-            {
-                if (_playersCheckInterval != value)
-                {
-                    _playersCheckInterval = value;
-                    UpdatePlayersCheckTimer();
-                }
-            }
-        }
+        public int PlayersCheckInterval { get; set; } = 5;
 
         public PlayersResult CurrentPlayers { get; private set; }
 
@@ -140,16 +125,12 @@ namespace OsmcRemote
 
         public void Dispose()
         {
+            _isCheckerRunning = false;
             if (_httpClient != null)
             {
                 _httpClient.Dispose();
                 _httpClient = null;
                 IsConnected = false;
-            }
-            if (_osmcAndPlayerCheckTimer != null)
-            {
-                _osmcAndPlayerCheckTimer.Dispose();
-                _osmcAndPlayerCheckTimer = null;
             }
         }
 
@@ -157,7 +138,8 @@ namespace OsmcRemote
 
         public void Start()
         {
-            UpdatePlayersCheckTimer();
+            _isCheckerRunning = true;
+            TimerDrivenUpdateLoop();
         }
 
         private async Task<HttpResponseMessage> Connect()
@@ -234,7 +216,7 @@ namespace OsmcRemote
         {
             var resp =  await Post("Input.Select");
             // this may change the status
-            UpdatePlaybackStatus();
+            await UpdatePlaybackStatus();
             return resp;
         }
 
@@ -355,7 +337,7 @@ namespace OsmcRemote
             return responseJson;
         }
 
-        public async void UpdatePlaybackStatus()
+        public async Task UpdatePlaybackStatus()
         {
             var respPlayers = await Post("Player.GetActivePlayers");
             CurrentPlayers = respPlayers.Result as PlayersResult;
@@ -377,31 +359,24 @@ namespace OsmcRemote
             return string.Format("{0}{1}", RpcUrl, command);
         }
 
-        private void UpdatePlayersCheckTimer()
+        private async void TimerDrivenUpdateLoop()
         {
-            if (_osmcAndPlayerCheckTimer != null)
+            while (_isCheckerRunning)
             {
-                _osmcAndPlayerCheckTimer.Dispose();
-                _osmcAndPlayerCheckTimer = null;
-            }
-            if (PlayersCheckInterval > 0)
-            {
-                _osmcAndPlayerCheckTimer = new Timer(TimerDrivenUpdate, null, _timerDueTime, PlayersCheckInterval * 1000);
+                await TimerDrivenUpdate(null);
+                await Task.Delay(PlayersCheckInterval * 1000);
             }
         }
-
-        private async void TimerDrivenUpdate(object state)
+        
+        private async Task TimerDrivenUpdate(object state)
         {
             if (IsConnected)
             {
-                UpdatePlaybackStatus();
+                await UpdatePlaybackStatus();
             }
             else
             {
-                if (CheckingConnection != null)
-                {
-                    CheckingConnection(this, new EventArgs());
-                }
+                CheckingConnection?.Invoke(this, new EventArgs());
 
                 var resp = await Connect();
 
@@ -415,10 +390,7 @@ namespace OsmcRemote
 
         private void RaisePropertyChangedEvent(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
