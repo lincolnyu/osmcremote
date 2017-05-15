@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Media.Animation;
 using OsmcRemoteUwp.Data;
 using OsmcRemoteUwp.Commands;
 using OsmcRemoteUwp.Helpers;
+using Windows.UI.Popups;
 
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -328,7 +329,17 @@ namespace OsmcRemoteUwp
 
         private async void PowerButtonOnClick(object sender, RoutedEventArgs e)
         {
-            await Client.Client.ShutDown();
+            var md = new MessageDialog("Are you sure you want to turn of the device?");
+
+            md.Commands.Add(new UICommand("Yes"));
+            md.Commands.Add(new UICommand("No"));
+            md.DefaultCommandIndex = 1;
+            md.CancelCommandIndex = 1;
+            var cmd = await md.ShowAsync();
+            if (cmd.Label == "Yes")
+            {
+                await Client.Client.ShutDown();
+            }
         }
 
         private async void StopOnClick(object sender, RoutedEventArgs e)
