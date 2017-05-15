@@ -35,7 +35,12 @@ namespace OsmcRemote
         private bool _playersActive;
         private bool _isConnected;
 
+        /// <summary>
+        ///  If the connection checker is running
+        /// </summary>
         private bool _isCheckerRunning;
+
+        private Task _checkingloopTask;
 
         #endregion
 
@@ -125,13 +130,7 @@ namespace OsmcRemote
 
         public void Dispose()
         {
-            _isCheckerRunning = false;
-            if (_httpClient != null)
-            {
-                _httpClient.Dispose();
-                _httpClient = null;
-                IsConnected = false;
-            }
+            Close().Wait();
         }
 
         #endregion
@@ -139,7 +138,22 @@ namespace OsmcRemote
         public void Start()
         {
             _isCheckerRunning = true;
-            TimerDrivenUpdateLoop();
+            _checkingloopTask = TimerDrivenUpdateLoop();
+        }
+
+        public async Task Close()
+        {
+            _isCheckerRunning = false;
+            if (_checkingloopTask != null)
+            {
+                await _checkingloopTask;
+            }
+            if (_httpClient != null)
+            {
+                _httpClient.Dispose();
+                _httpClient = null;
+                IsConnected = false;
+            }
         }
 
         private async Task<HttpResponseMessage> Connect()
@@ -359,7 +373,7 @@ namespace OsmcRemote
             return string.Format("{0}{1}", RpcUrl, command);
         }
 
-        private async void TimerDrivenUpdateLoop()
+        private async Task TimerDrivenUpdateLoop()
         {
             while (_isCheckerRunning)
             {

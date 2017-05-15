@@ -18,17 +18,17 @@ namespace OsmcRemoteUwp.Helpers
             }
         }
 
-        public static void Connect()
+        public static async void Connect()
         {
             var client = ((App)Application.Current).Client;
             var settings = ((App)Application.Current).Settings;
-            client.Connect(settings.ServerAddress, settings.UserName, settings.Password);
+            await client.Connect(settings.ServerAddress, settings.UserName, settings.Password);
         }
 
-        public static void Disconnect()
+        public static async void Disconnect()
         {
             var client = ((App)Application.Current).Client;
-            client.Disconnect();
+            await client.Disconnect();
         }
     }
 }

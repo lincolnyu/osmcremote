@@ -1,6 +1,7 @@
 ﻿using OsmcRemote;
 using System.ComponentModel;
 using System;
+using System.Threading.Tasks;
 
 namespace OsmcRemoteUwp.Data
 {
@@ -12,6 +13,15 @@ namespace OsmcRemoteUwp.Data
         private bool _playersActive;
         private ConnectionIndicatorStatuses _connectionIndicatorStatus;
 
+        #endregion
+
+        #region Constructors
+        
+        ~RemoteControlClient()
+        {
+            Close();
+        }
+        
         #endregion
 
         #region Properties
@@ -75,12 +85,17 @@ namespace OsmcRemoteUwp.Data
 
         public void Dispose()
         {
-            Disconnect();
+            Close();
         }
 
-        public void Connect(string serverAddress, string userName, string password)
+        public void Close()
         {
-            Disconnect();
+            Disconnect().Wait();
+        }
+
+        public async Task Connect(string serverAddress, string userName, string password)
+        {
+            await Disconnect();
 
             Client = new Client(serverAddress, userName, password);
             PlayersActive = Client.PlayersActive;
@@ -90,14 +105,14 @@ namespace OsmcRemoteUwp.Data
             Client.Start();
         }
 
-        public void Disconnect()
+        public async Task Disconnect()
         {
             if (Client != null)
             {
                 Client.PropertyChanged -= ClientOnPropertyChanged;
                 Client.CheckingConnection -= ClientOnCheckingConnection;
                 Client.CheckedConnection -= ClientOnCheckedConnection;
-                Client.Dispose();
+                await Client.Close();
                 Client = null;
             }
         }

@@ -2,7 +2,6 @@
     x:Class="OsmcRemoteUwp.Views.AuthenticationDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OsmcRemoteUwp.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -14,7 +13,7 @@
     SecondaryButtonClick="CancelButtonOnClick">
 
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <TextBox x:Name="ServerAddressTextBox" Header="Server Address"/>
+        <TextBox x:Name="ServerAddressTextBox" Header="Server Address" PlaceholderText="Example: 192.168.1.3:8080"/>
         <TextBox x:Name="UserNameTextBox" Header="User Name"/>
         <PasswordBox x:Name="PasswordBox" Header="Password"/>
 
