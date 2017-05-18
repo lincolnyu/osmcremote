@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     IsEnabled="{Binding IsConnected}"
     Loaded="PageOnLoaded">
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
             <converters:ConvectionIndicatorStatusToBrushConverter x:Key="ConvectionIndicatorStatusToBrushConverter"/>
             <Style TargetType="Button" x:Key="BigButton">

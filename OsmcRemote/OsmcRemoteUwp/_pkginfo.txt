@@ -1,1 +1,1 @@
-C:\Users\quanb\Source\Repos\osmcremote\OsmcRemote\OsmcRemoteUwp\bin\ARM\Release\Upload\OsmcRemoteUwp_1.1.0.0\OsmcRemoteUwp_1.1.0.0_x86_x64_arm.appxbundle
+C:\Users\quanb\Source\Repos\osmcremote\OsmcRemote\OsmcRemoteUwp\bin\ARM\Release\Upload\OsmcRemoteUwp_1.2.1.0\OsmcRemoteUwp_1.2.1.0_x86_x64_arm.appxbundle
