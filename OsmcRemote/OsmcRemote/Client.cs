@@ -335,9 +335,21 @@ namespace OsmcRemote
             var playerId = CurrentPlayers.Players[0].PlayerId;
             return playerId;
         }
-
       
         public async Task<ResponseJson> Post(string method, params KeyValuePair<string, object>[] kvps)
+        {
+            try
+            {
+                return await PostNoThrow(method, kvps);
+            }
+            catch (HttpRequestException)
+            {
+                IsConnected = false;
+                return null;
+            }
+        }
+
+        private async Task<ResponseJson> PostNoThrow(string method, params KeyValuePair<string, object>[] kvps)
         {
             var url = GetRpcUrl(method);
 
@@ -353,19 +365,26 @@ namespace OsmcRemote
 
         public async Task UpdatePlaybackStatus()
         {
-            var respPlayers = await Post("Player.GetActivePlayers");
-            CurrentPlayers = respPlayers.Result as PlayersResult;
-            PlayersActive = CurrentPlayers != null && CurrentPlayers.Players.Count > 0;
-            if (CurrentPlayers == null)
+            try
             {
-                return;
+                var respPlayers = await PostNoThrow("Player.GetActivePlayers");
+                CurrentPlayers = respPlayers.Result as PlayersResult;
+                PlayersActive = CurrentPlayers != null && CurrentPlayers.Players.Count > 0;
+                if (CurrentPlayers == null)
+                {
+                    return;
+                }
+
+                var respProperties = await PostNoThrow("Player.GetProperties");
+                CurrentProperties = respProperties.Result as PropertiesResult;
+
+                var respItems = await PostNoThrow("Player.GetItems");
+                CurrentItems = respItems.Result as ItemsResult;
             }
-
-            var respProperties = await Post("Player.GetProperties");
-            CurrentProperties = respProperties.Result as PropertiesResult;
-
-            var respItems = await Post("Player.GetItems");
-            CurrentItems = respItems.Result as ItemsResult;
+            catch (HttpRequestException)
+            {
+                IsConnected = false;
+            }
         }
 
         private string GetRpcUrl(string command)
@@ -394,11 +413,7 @@ namespace OsmcRemote
 
                 var resp = await Connect();
 
-                if (CheckedConnection != null)
-                {
-                    var args = new CheckedConnectionEventArgs(resp);
-                    CheckedConnection(this, args);
-                }
+                CheckedConnection?.Invoke(this, new CheckedConnectionEventArgs(resp));
             }
         }
 
